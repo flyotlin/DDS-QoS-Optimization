@@ -1,1 +1,4 @@
 **/hosts
+case-1/src/*
+!case-1/src/SimpleString.idl
+!case-1/src/*.py
