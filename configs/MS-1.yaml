@@ -1,0 +1,11 @@
+---
+History:
+  kind: KEEP_ALL
+  depth: -1   # Means None
+Reliability:
+  kind: RELIABLE
+  max_blocking_time: 100
+ResourceLimits:
+  max_samples: 1
+  max_instances: 10
+  max_samples_per_instance: 400
