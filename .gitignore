@@ -1,4 +1,5 @@
 **/hosts
 case-1/src/*
 !case-1/src/SimpleString.idl
-!case-1/src/*.py
+!case-1/src/config.py
+!case-1/src/publisher.py
