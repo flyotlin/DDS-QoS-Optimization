@@ -9,7 +9,7 @@ from config import YamlConfig
 
 class WriterListener(fastdds.DataWriterListener):
     def __init__(self, writer):
-        self.writer = writer    # class Writer defined below
+        self._writer = writer    # class Writer defined below
         super().__init__()
 
     def on_publication_matched(self, writer, info):
@@ -33,17 +33,17 @@ class Writer:
 
         self._matched_reader = 0
         self._cvDiscovery = Condition()
-        self.index = 0
+        self.index = 1
 
         self.participant = self.create_participant()
-        self.topic = self.create_topic(name="SimpleStringTopic")
+        self.topic = self.create_topic(name="SimpleStringTopic")    # TODO: need to be modified later
         self.publisher = self.create_publisher()
         self.writer = self.create_datawriter()
 
     def write(self, msg: str = "Hello World!"):
         data = SimpleString.SimpleString()
-        data.index = self.index
-        data.data = msg
+        data.index(self.index)
+        data.data(msg)
 
         self.writer.write(data)
         print(f"Sending {data.data()} : {data.index()}")
@@ -132,8 +132,6 @@ def main():
     pwd = os.path.abspath(os.path.dirname(__file__))
     config_name = "OMG-Def.yaml"
     config = YamlConfig.create_from_yaml(os.path.join(pwd, '../../configs/', config_name))
-    config.setTotalMsg(1000)
-    config.setSendingRate(100)  # 100 messages per sec
 
     writer = Writer(config)
     writer.run()

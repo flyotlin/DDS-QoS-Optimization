@@ -53,7 +53,10 @@ class YamlConfig:
         reliability = cls.create_reliability(config)
         resourceLimits = cls.create_resourceLimits(config)
 
-        return YamlConfig(history, reliability, resourceLimits)
+        totalMsg = config.get("TotalMessages", 10)
+        sendingRate = config.get("SendingRate", 10)
+
+        return YamlConfig(history, reliability, resourceLimits, totalMsg=totalMsg, sendingRate=sendingRate)
 
     @classmethod
     def load_yaml_as_dict(cls, path: str) -> dict:
