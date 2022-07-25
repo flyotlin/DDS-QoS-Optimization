@@ -9,3 +9,5 @@ ResourceLimits:
   max_samples: 50000
   max_instances: 10
   max_samples_per_instance: 5000
+TotalMessages: 25000   # publisher sent 1000 messages in total
+SendingRate: 1000   # 10 samples/sec
