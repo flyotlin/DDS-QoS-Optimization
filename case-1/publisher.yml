@@ -1,0 +1,28 @@
+---
+- name: Run Publisher
+  hosts: publisher
+  vars:
+    configName: "OMG-Def"
+    totalMsgs: 10000
+    sendingRate: 200
+  vars_files:
+    - common_vars.yml
+  tasks:
+    - name: Clone repo
+      ansible.builtin.git:
+        repo: "{{ repoUrl }}"
+        dest: "{{ repoDest }}"
+    - name: Generate init-repo script
+      template:
+        src: init-repo.j2
+        dest: "{{ homePath }}/init-repo.sh"
+    - name: Initialize repo source code
+      command: "bash {{ homePath }}/init-repo.sh"
+    - name: Run python publisher script
+      shell:
+        cmd: "source {{ fastddsSrc }} && nohup python3 {{ publisher }} {{ configName }} {{ totalMsgs }} {{ sendingRate }} {{ item }} &> {{ repoDest }}/pub_{{ item }}.log &"
+        executable: /bin/bash
+      with_items:
+        - "{{ topicName }}_1"
+        - "{{ topicName }}_2"
+        - "{{ topicName }}_3"
