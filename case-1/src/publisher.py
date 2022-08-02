@@ -15,13 +15,13 @@ class WriterListener(fastdds.DataWriterListener):
 
     def on_publication_matched(self, writer, info):
         if 0 < info.current_count_change:
-            print("Publisher matched subscriber {}".format(info.last_subscription_handle))
+            print("Publisher matched subscriber {}".format(info.last_subscription_handle), flush=True)
             self._writer._cvDiscovery.acquire()
             self._writer._matched_reader += 1
             self._writer._cvDiscovery.notify()
             self._writer._cvDiscovery.release()
         else:
-            print("Publisher unmatched subscriber {}".format(info.last_subscription_handle))
+            print("Publisher unmatched subscriber {}".format(info.last_subscription_handle), flush=True)
             self._writer._cvDiscovery.acquire()
             self._writer._matched_reader -= 1
             self._writer._cvDiscovery.notify()
@@ -55,15 +55,15 @@ class Writer:
         data.data(msg)
 
         self.writer.write(data)
-        print(f"Sending {data.data()} : {data.index()}")
+        print(f"Sending {data.data()} : {data.index()}", flush=True)
         self.index = self.index + 1
 
     def wait_discovery(self):
         self._cvDiscovery.acquire()
-        print("Writer is waiting discovery...")
+        print("Writer is waiting discovery...", flush=True)
         self._cvDiscovery.wait_for(lambda: self._matched_reader != 0)
         self._cvDiscovery.release()
-        print("Writer discovery finished...")
+        print("Writer discovery finished...", flush=True)
 
     def run(self):
         self.wait_discovery()
@@ -136,7 +136,7 @@ class Writer:
 
 
 def main(argv: list):
-    print("Start publisher.")
+    print("Start publisher.", flush=True)
 
     configName = argv[0]
     totalMsgs = int(argv[1])
@@ -159,7 +159,7 @@ def main(argv: list):
 if __name__ == '__main__':
     # TODO: refactor to argparse
     if 5 != len(sys.argv):
-        print("Incorrect number of arguments")
+        print("Incorrect number of arguments", flush=True)
         exit()
     main(sys.argv[1:])
     exit()

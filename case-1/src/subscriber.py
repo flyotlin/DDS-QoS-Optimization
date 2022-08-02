@@ -3,6 +3,8 @@ import fastdds
 import SimpleString
 import signal
 import sys
+import threading
+import time
 
 from config import YamlConfig
 
@@ -14,22 +16,43 @@ class ReaderListener(fastdds.DataReaderListener):
 
     def on_subscription_matched(self, reader, info):
         if 0 < info.current_count_change:
-            print(f"Subscriber matched publisher {info.last_publication_handle}")
+            print(f"Subscriber matched publisher {info.last_publication_handle}", flush=True)
         else:
-            print(f"Subscriber unmatched publisher {info.last_publication_handle}")
+            print(f"Subscriber unmatched publisher {info.last_publication_handle}", flush=True)
 
     def on_data_available(self, reader: fastdds.DataReader):
         info = fastdds.SampleInfo()
         data = SimpleString.SimpleString()
         reader.take_next_sample(data, info)
 
-        print(f"Received {data.data()}: {data.index()}")
+        print(f"Received {data.data()}: {data.index()}", flush=True)
         self._reader.samples_received += 1
 
-        # Terminates the program once received enough samples
-        print(self._reader.samples_received, self._reader.totalMsgs)
+        # Terminates either on enough samples received or idling too long
+
+        # Idling too long
+        if 1 == self._reader.samples_received:
+            self.monitor(os.getpid())
+
+        # Received enough samples
+        print(self._reader.samples_received, self._reader.totalMsgs, flush=True)
         if self._reader.samples_received >= self._reader.totalMsgs:
+            print("Killed on received enough samples", flush=True)
             os.kill(os.getpid(), signal.SIGINT)
+
+    def monitor(self, ppid: int, timeout: int = 10):
+        def monitor_job(index):
+            old_index = -1
+            while True:
+                if index() == old_index:
+                    break
+                old_index = index()
+                time.sleep(timeout)
+            print("Killed by monitor", flush=True)
+            os.kill(ppid, signal.SIGINT)
+
+        monitor_thread = threading.Thread(target=monitor_job, args=(lambda: self._reader.samples_received, ))
+        monitor_thread.start()
 
 
 class Reader:
@@ -42,7 +65,7 @@ class Reader:
         self.totalMsgs = totalMsgs
         self.topicName = topicName
 
-        print(os.getpid())
+        print(os.getpid(), flush=True)
         self.samples_received = 0
 
         self.participant = self.create_participant()
@@ -52,7 +75,7 @@ class Reader:
 
     def run(self):
         signal.signal(signal.SIGINT, self.signal_handler)
-        print("Press Ctrl+C to stop")
+        print("Press Ctrl+C to stop", flush=True)
         signal.pause()
         self.delete()
 
@@ -62,7 +85,7 @@ class Reader:
         factory.delete_participant(self.participant)
 
     def signal_handler(self, sig, frame):
-        print("Interrupted!")
+        print("Interrupted!", flush=True)
 
     def create_participant(self, domain_id: int = 0) -> fastdds.DomainParticipant:
         factory: fastdds.DomainParticipantFactory = fastdds.DomainParticipantFactory.get_instance()
@@ -93,7 +116,7 @@ class Reader:
 
 
 def main(argv: list):
-    print("Creating Subscriber.")
+    print("Creating Subscriber.", flush=True)
 
     configName = argv[0]
     totalMsgs = int(argv[1])
@@ -114,7 +137,7 @@ def main(argv: list):
 if __name__ == '__main__':
     # TODO: refactor to argparse
     if 4 != len(sys.argv):
-        print("Incorrect number of arguments")
+        print("Incorrect number of arguments", flush=True)
         exit()
     main(sys.argv[1:])
     exit()
