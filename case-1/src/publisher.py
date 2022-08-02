@@ -1,6 +1,7 @@
 import fastdds
 import os
 import SimpleString
+import sys
 import time
 
 from threading import Condition
@@ -28,15 +29,23 @@ class WriterListener(fastdds.DataWriterListener):
 
 
 class Writer:
-    def __init__(self, config: YamlConfig = None) -> None:
+    def __init__(
+            self,
+            config: YamlConfig = None,
+            totalMsgs: int = 10,
+            sendingRate: int = 10,
+            topicName: str = "SimpleStringTopic") -> None:
         self.config = config
+        self.totalMsgs = totalMsgs
+        self.sendingRate = sendingRate
+        self.topicName = topicName
 
         self._matched_reader = 0
         self._cvDiscovery = Condition()
         self.index = 1
 
         self.participant = self.create_participant()
-        self.topic = self.create_topic(name="SimpleStringTopic")    # TODO: need to be modified later
+        self.topic = self.create_topic(name=self.topicName)
         self.publisher = self.create_publisher()
         self.writer = self.create_datawriter()
 
@@ -58,8 +67,8 @@ class Writer:
 
     def run(self):
         self.wait_discovery()
-        for _ in range(self.config.totalMsg):
-            time.sleep(1 / self.config.sendingRate)
+        for _ in range(self.totalMsgs):
+            time.sleep(1 / self.sendingRate)
             self.write()
         self.delete()
 
@@ -126,17 +135,31 @@ class Writer:
         self.topic_qos.resource_limits(resourceLimits)
 
 
-def main():
+def main(argv: list):
     print("Start publisher.")
 
+    configName = argv[0]
+    totalMsgs = int(argv[1])
+    sendingRate = int(argv[2])
+    topicName = argv[3]
+
     pwd = os.path.abspath(os.path.dirname(__file__))
-    config_name = "OMG-Def.yaml"
+    config_name = configName + ".yaml"
     config = YamlConfig.create_from_yaml(os.path.join(pwd, '../../configs/', config_name))
 
-    writer = Writer(config)
+    writer = Writer(
+        config=config,
+        totalMsgs=totalMsgs,
+        sendingRate=sendingRate,
+        topicName=topicName
+    )
     writer.run()
 
 
 if __name__ == '__main__':
-    main()
+    # TODO: refactor to argparse
+    if 5 != len(sys.argv):
+        print("Incorrect number of arguments")
+        exit()
+    main(sys.argv[1:])
     exit()

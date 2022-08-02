@@ -4,3 +4,4 @@ case-1/src/*
 !case-1/src/config.py
 !case-1/src/publisher.py
 !case-1/src/subscriber.py
+inventory

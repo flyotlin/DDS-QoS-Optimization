@@ -29,21 +29,10 @@ class YamlConfig:
             self,
             history: HistoryQosConf,
             reliability: ReliabilityQosConf,
-            resourceLimits: ResourceLimitsQosConf,
-            totalMsg: int = 10,
-            sendingRate: int = 10) -> None:
+            resourceLimits: ResourceLimitsQosConf) -> None:
         self.history = history
         self.reliability = reliability
         self.resourceLimits = resourceLimits
-
-        self.totalMsg = totalMsg
-        self.sendingRate = sendingRate
-
-    def setTotalMsg(self, totalMsg: int) -> None:
-        self.totalMsg = totalMsg
-
-    def setSendingRate(self, sendingRate: int) -> None:
-        self.sendingRate = sendingRate
 
     @classmethod
     def create_from_yaml(cls, path: str):
@@ -53,10 +42,7 @@ class YamlConfig:
         reliability = cls.create_reliability(config)
         resourceLimits = cls.create_resourceLimits(config)
 
-        totalMsg = config.get("TotalMessages", 10)
-        sendingRate = config.get("SendingRate", 10)
-
-        return YamlConfig(history, reliability, resourceLimits, totalMsg=totalMsg, sendingRate=sendingRate)
+        return YamlConfig(history, reliability, resourceLimits)
 
     @classmethod
     def load_yaml_as_dict(cls, path: str) -> dict:

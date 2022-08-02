@@ -2,6 +2,7 @@ import os
 import fastdds
 import SimpleString
 import signal
+import sys
 
 from config import YamlConfig
 
@@ -32,13 +33,20 @@ class ReaderListener(fastdds.DataReaderListener):
 
 
 class Reader:
-    def __init__(self, config: YamlConfig) -> None:
+    def __init__(
+            self,
+            config: YamlConfig,
+            totalMsgs: int = 10,
+            topicName: str = "SimpleStringType") -> None:
+        self.config = config
+        self.totalMsgs = totalMsgs
+        self.topicName = topicName
+
         print(os.getpid())
         self.samples_received = 0
-        self.totalMsgs = config.totalMsg
 
         self.participant = self.create_participant()
-        self.topic = self.create_topic(name="SimpleStringTopic")    # TODO: need to be modified later
+        self.topic = self.create_topic(name=self.topicName)
         self.subscriber = self.create_subscriber()
         self.reader = self.create_datareader()
 
@@ -84,17 +92,29 @@ class Reader:
         return self.subscriber.create_datareader(self.topic, self.reader_qos, self.listener)
 
 
-def main():
+def main(argv: list):
     print("Creating Subscriber.")
 
+    configName = argv[0]
+    totalMsgs = int(argv[1])
+    topicName = argv[2]
+
     pwd = os.path.abspath(os.path.dirname(__file__))
-    config_name = "OMG-Def.yaml"
+    config_name = configName + ".yaml"
     config = YamlConfig.create_from_yaml(os.path.join(pwd, '../../configs/', config_name))
 
-    reader = Reader(config)
+    reader = Reader(
+        config=config,
+        totalMsgs=totalMsgs,
+        topicName=topicName
+    )
     reader.run()
 
 
 if __name__ == '__main__':
-    main()
+    # TODO: refactor to argparse
+    if 4 != len(sys.argv):
+        print("Incorrect number of arguments")
+        exit()
+    main(sys.argv[1:])
     exit()
