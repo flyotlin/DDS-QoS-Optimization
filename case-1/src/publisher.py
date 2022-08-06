@@ -1,3 +1,4 @@
+import argparse
 import fastdds
 import os
 import SimpleString
@@ -135,13 +136,13 @@ class Writer:
         self.topic_qos.resource_limits(resourceLimits)
 
 
-def main(argv: list):
+def main(args: list):
     print("Start publisher.", flush=True)
 
-    configName = argv[0]
-    totalMsgs = int(argv[1])
-    sendingRate = int(argv[2])
-    topicName = argv[3]
+    configName = args.config
+    totalMsgs = args.messages
+    sendingRate = args.rate
+    topicName = args.topic
 
     pwd = os.path.abspath(os.path.dirname(__file__))
     config_name = configName + ".yaml"
@@ -157,9 +158,12 @@ def main(argv: list):
 
 
 if __name__ == '__main__':
-    # TODO: refactor to argparse
-    if 5 != len(sys.argv):
-        print("Incorrect number of arguments", flush=True)
-        exit()
-    main(sys.argv[1:])
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", "-c", help="specify config name", default="OMG-Def")
+    parser.add_argument("--messages", "-m", help="specify total number of messages sent by a publisher", type=int, default=10000)
+    parser.add_argument("--rate", "-r", help="specify publisher sending rate", type=int, default=100)
+    parser.add_argument("--topic", "-t", help="specify topic name to which publisher publishes", default="SimpleStringTopic_1")
+
+    args = parser.parse_args()
+    main(args)
     exit()

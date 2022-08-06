@@ -1,3 +1,4 @@
+import argparse
 import os
 import fastdds
 import SimpleString
@@ -115,12 +116,12 @@ class Reader:
         return self.subscriber.create_datareader(self.topic, self.reader_qos, self.listener)
 
 
-def main(argv: list):
+def main(args: list):
     print("Creating Subscriber.", flush=True)
 
-    configName = argv[0]
-    totalMsgs = int(argv[1])
-    topicName = argv[2]
+    configName = args.config
+    totalMsgs = args.messages
+    topicName = args.topic
 
     pwd = os.path.abspath(os.path.dirname(__file__))
     config_name = configName + ".yaml"
@@ -135,9 +136,11 @@ def main(argv: list):
 
 
 if __name__ == '__main__':
-    # TODO: refactor to argparse
-    if 4 != len(sys.argv):
-        print("Incorrect number of arguments", flush=True)
-        exit()
-    main(sys.argv[1:])
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", "-c", help="specify config name", default="OMG-Def")
+    parser.add_argument("--messages", "-m", help="specify total number of messages sent by a publisher", type=int, default=10000)
+    parser.add_argument("--topic", "-t", help="specify topic name to which publisher publishes", default="SimpleStringTopic_1")
+
+    args = parser.parse_args()
+    main(args)
     exit()
