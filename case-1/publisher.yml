@@ -18,9 +18,17 @@
         dest: "{{ homePath }}/init-repo.sh"
     - name: Initialize repo source code
       command: "bash {{ homePath }}/init-repo.sh"
+    - name: Clean old logs
+      shell:
+        cmd: rm -rf "{{ repoDest }}/*.log"
+        executable: /bin/bash
     - name: Run python publisher script
       shell:
-        cmd: "source {{ fastddsSrc }} && nohup python3 {{ publisher }} {{ configName }} {{ totalMsgs }} {{ sendingRate }} {{ item }} &> {{ repoDest }}/pub_{{ item }}.log &"
+        cmd: |
+          source "{{ fastddsSrc }}" && \
+          nohup python3 "{{ publisher }}" --config "{{ configName }}" \
+          --messages "{{ totalMsgs }}" --rate "{{ sendingRate }}" \
+          --topic "{{ item }}" &> "{{ repoDest }}/pub_{{ item }}.log" &
         executable: /bin/bash
       with_items:
         - "{{ topicName }}_1"

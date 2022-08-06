@@ -26,17 +26,18 @@ class ReaderListener(fastdds.DataReaderListener):
         data = SimpleString.SimpleString()
         reader.take_next_sample(data, info)
 
-        print(f"Received {data.data()}: {data.index()}", flush=True)
+        print(f"Received {data.data()}: {data.index()}/{self._reader.totalMsgs}", flush=True)
         self._reader.samples_received += 1
 
+        ###
         # Terminates either on enough samples received or idling too long
+        ###
 
         # Idling too long
         if 1 == self._reader.samples_received:
             self.monitor(os.getpid())
 
         # Received enough samples
-        print(self._reader.samples_received, self._reader.totalMsgs, flush=True)
         if self._reader.samples_received >= self._reader.totalMsgs:
             print("Killed on received enough samples", flush=True)
             os.kill(os.getpid(), signal.SIGINT)
