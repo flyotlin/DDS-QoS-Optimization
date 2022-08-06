@@ -6,3 +6,4 @@ case-1/src/*
 !case-1/src/subscriber.py
 inventory
 **/logs
+**/*.log

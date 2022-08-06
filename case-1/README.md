@@ -11,6 +11,10 @@
 - `$ python3 publisher.py <configName> <totalMsgs> <topicName>`
 
 ### Run the experiment
+- `$ cd dds-qos-optimization/case-1`
+- `$ ./run.sh | tee case-1.log`
+
+### Run the experiment (Manually)
 > On your own computer.
 
 Prepare `inventory` from `inventory.Example` first!
@@ -22,7 +26,7 @@ Prepare `inventory` from `inventory.Example` first!
 - `$ ansible-playbook -i inventory publisher.yml`
   - Set up 3 publishers on 1 node
   - Notice `configName`/`totalMsgs` inside, others can be configured in `common_vars.yml`
-- `$ ansible-playbook -i inventory collect.yml`
+- `$ ansible-playbook -i inventory collect.yml -e "times=<time>"`
   - Collect logs from publisher and subscriber
   - Notice `localDest` inside
 
