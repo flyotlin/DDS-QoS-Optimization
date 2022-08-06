@@ -2,7 +2,7 @@
 
 SLEEP_TIME=80
 
-for i in {2..10}
+for i in {1..10}
 do
     echo "Start deploy pubs/subs in $i-th trial..."
     ansible-playbook -i inventory subscriber.yml
