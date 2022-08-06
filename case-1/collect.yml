@@ -2,7 +2,7 @@
 - name: Collect publisher logs
   hosts: publisher
   vars:
-    localDest: "/Users/flyotlin/Documents/Program/dds-qos-optimization/case-1/logs/{{ times }}/pub/"
+    localDest: "/Users/flyotlin/Documents/Program/dds-qos-optimization/case-1/logs/{{ config }}/{{ times }}/pub/"
   vars_files:
     - "common_vars.yml"
   tasks:
@@ -19,7 +19,7 @@
 - name: Collect subscriber logs
   hosts: subscriber
   vars:
-    localDest: "/Users/flyotlin/Documents/Program/dds-qos-optimization/case-1/logs/{{ times }}/sub/"
+    localDest: "/Users/flyotlin/Documents/Program/dds-qos-optimization/case-1/logs/{{ config }}/{{ times }}/sub/"
   vars_files:
     - "common_vars.yml"
   tasks:
