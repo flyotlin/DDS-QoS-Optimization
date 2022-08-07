@@ -7,3 +7,4 @@ case-1/src/*
 inventory
 **/logs
 **/*.log
+**/.flag
