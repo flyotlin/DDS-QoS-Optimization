@@ -1,0 +1,30 @@
+---
+- name: Delete All Old Log Files
+  hosts: all
+  vars_files:
+    - common_vars.yml
+  tasks:
+    - name: Delete Log Files
+      ansible.builtin.file:
+        path: "{{ logPath }}"
+        state: absent
+    - name: Restore Log Directory
+      ansible.builtin.file:
+        path: "{{ logPath }}"
+        state: directory
+
+- name: Create Host 1 Pub/Sub
+  hosts: host1
+  vars_files:
+    - common_vars.yml
+  tasks:
+    - name: Clone Repo
+      ansible.builtin.git:
+        repo: "{{ repoUrl }}"
+        dest: "{{ repoPath }}"
+    - name: Generate Initialize Script
+      template:
+        src: init.j2
+        dest: "{{ basePath }}/init.sh"
+    - name: Run Initialize Script
+      command: "bash {{ basePath }}/init.sh"

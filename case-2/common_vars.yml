@@ -1,0 +1,7 @@
+---
+repoUrl: "https://github.com/flyotlin/DDS-QoS-Optimization.git"
+fastddsPath: "/home/pdclab/Fast-DDS-python/install/setup.bash"
+repoPath: "/home/pdclab/Optimize-DDS-QoS"
+basePath: "{{ repoPath }}/case-2"
+srcPath: "{{ basePath }}/src"
+logPath: "{{ basePath }}/log"

@@ -5,6 +5,7 @@ case-1/src/*
 !case-1/src/publisher.py
 !case-1/src/subscriber.py
 inventory
+inventory.yaml
 **/logs
 **/*.log
 **/.flag
