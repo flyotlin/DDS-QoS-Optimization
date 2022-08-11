@@ -1,7 +1,43 @@
 ---
+# Playbook Settings
 repoUrl: "https://github.com/flyotlin/DDS-QoS-Optimization.git"
 fastddsPath: "/home/pdclab/Fast-DDS-python/install/setup.bash"
 repoPath: "/home/pdclab/Optimize-DDS-QoS"
 basePath: "{{ repoPath }}/case-2"
 srcPath: "{{ basePath }}/src"
 logPath: "{{ basePath }}/log"
+
+# Common Experiment Settings
+# (Should be passed in ansible-playbook command)
+config: "OMG-Def"
+messages: 10000
+topicPrefix: "SimpleStringTopic"
+rate: 200
+
+# Host 1 Settings
+host1_pubs:
+  - 1
+  - 4
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+
+# Host 2 Settings
+host2_subs:
+  - 1
+  - 4
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
