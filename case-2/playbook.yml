@@ -18,13 +18,13 @@
         dest: "{{ repoPath }}"
     - name: Generate Initialize Script
       template:
-        src: init.j2
+        src: init.sh.j2
         dest: "{{ basePath }}/init.sh"
     - name: Run Initialize Script
       command: "bash {{ basePath }}/init.sh"
     - name: Generate Create Script
       template:
-        src: create.sh
+        src: create.sh.j2
         dest: "{{ basePath }}/create.sh"
     - name: Create control file `.flag`
       ansible.builtin.copy:
