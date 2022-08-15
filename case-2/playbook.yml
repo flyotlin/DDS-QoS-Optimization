@@ -12,6 +12,24 @@
       ansible.builtin.file:
         path: "{{ basePath }}/.flag"
         state: absent
+    - name: Clone Repo
+      ansible.builtin.git:
+        repo: "{{ repoUrl }}"
+        dest: "{{ repoPath }}"
+    - name: Generate Initialize Script
+      template:
+        src: init.j2
+        dest: "{{ basePath }}/init.sh"
+    - name: Run Initialize Script
+      command: "bash {{ basePath }}/init.sh"
+    - name: Generate Create Script
+      template:
+        src: create.sh
+        dest: "{{ basePath }}/create.sh"
+    - name: Create control file `.flag`
+      ansible.builtin.copy:
+        dest: "{{ basePath }}/.flag"
+        content: 0
     - name: Restore Log Directory
       ansible.builtin.file:
         path: "{{ logPath }}"
@@ -25,24 +43,6 @@
   vars_files:
     - common_vars.yml
   tasks:
-    - name: Clone Repo
-      ansible.builtin.git:
-        repo: "{{ repoUrl }}"
-        dest: "{{ repoPath }}"
-    - name: Generate Initialize Script
-      template:
-        src: init.j2
-        dest: "{{ basePath }}/init.sh"
-    - name: Run Initialize Script
-      command: "bash {{ basePath }}/init.sh"
-    - name: Generate Create Script
-      template:
-        src: create.sh
-        dest: "{{ basePath }}/create.sh"
-    - name: Create control file `.flag`
-      ansible.builtin.copy:
-        dest: "{{ basePath }}/.flag"
-        content: 0
     - name: Create pub 1, 4, 7 ~ 15
       ansible.builtin.command: "bash {{ basePath }}/create.sh p{{ item }} pub {{ topicPrefix }}_{{ item }}"
       loop: "{{ host1_pubs }}"
@@ -52,24 +52,6 @@
   vars_files:
     - common_vars.yml
   tasks:
-    - name: Clone Repo
-      ansible.builtin.git:
-        repo: "{{ repoUrl }}"
-        dest: "{{ repoPath }}"
-    - name: Generate Initialize Script
-      template:
-        src: init.j2
-        dest: "{{ basePath }}/init.sh"
-    - name: Run Initialize Script
-      command: "bash {{ basePath }}/init.sh"
-    - name: Generate Create Script
-      template:
-        src: create.sh
-        dest: "{{ basePath }}/create.sh"
-    - name: Create control file `.flag`
-      ansible.builtin.copy:
-        dest: "{{ basePath }}/.flag"
-        content: 0
     - name: Create sub 1, 4, 7 ~ 15
       ansible.builtin.command: "bash {{ basePath }}/create.sh s{{ item }} sub {{ topicPrefix }}_{{ item }}"
       loop: "{{ host2_subs }}"
@@ -89,24 +71,6 @@
   vars_files:
     - common_vars.yml
   tasks:
-    - name: Clone Repo
-      ansible.builtin.git:
-        repo: "{{ repoUrl }}"
-        dest: "{{ repoPath }}"
-    - name: Generate Initialize Script
-      template:
-        src: init.j2
-        dest: "{{ basePath }}/init.sh"
-    - name: Run Initialize Script
-      command: "bash {{ basePath }}/init.sh"
-    - name: Generate Create Script
-      template:
-        src: create.sh
-        dest: "{{ basePath }}/create.sh"
-    - name: Create control file `.flag`
-      ansible.builtin.copy:
-        dest: "{{ basePath }}/.flag"
-        content: 0
     - name: Create pub 17
       ansible.builtin.command: "bash {{ basePath }}/create.sh p17 pub {{ topicPrefix }}_17"
     - name: Create sub 16 on Topic SimpleStringTopic_1
@@ -117,24 +81,6 @@
   vars_files:
     - common_vars.yml
   tasks:
-    - name: Clone Repo
-      ansible.builtin.git:
-        repo: "{{ repoUrl }}"
-        dest: "{{ repoPath }}"
-    - name: Generate Initialize Script
-      template:
-        src: init.j2
-        dest: "{{ basePath }}/init.sh"
-    - name: Run Initialize Script
-      command: "bash {{ basePath }}/init.sh"
-    - name: Generate Create Script
-      template:
-        src: create.sh
-        dest: "{{ basePath }}/create.sh"
-    - name: Create control file `.flag`
-      ansible.builtin.copy:
-        dest: "{{ basePath }}/.flag"
-        content: 0
     - name: Create s17
       ansible.builtin.command: "bash {{ basePath }}/create.sh s17 sub {{ topicPrefix }}_17"
 
