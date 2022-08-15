@@ -9,6 +9,7 @@ logPath: "{{ basePath }}/log"
 
 # Common Experiment Settings
 # (Should be passed in ansible-playbook command)
+trialNum: 1
 config: "OMG-Def"
 messages: 10000
 topicPrefix: "SimpleStringTopic"
@@ -41,3 +42,38 @@ host2_subs:
   - 13
   - 14
   - 15
+
+# Pub logs
+pub_logs:
+  - 1
+  - 4
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 17
+
+# Sub logs
+sub_logs:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+  - 14
+  - 15
+  - 16
+  - 17

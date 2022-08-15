@@ -8,10 +8,17 @@
       ansible.builtin.file:
         path: "{{ logPath }}"
         state: absent
+    - name: Delete Flag Files
+      ansible.builtin.file:
+        path: "{{ basePath }}/.flag"
+        state: absent
     - name: Restore Log Directory
       ansible.builtin.file:
         path: "{{ logPath }}"
         state: directory
+    - name: Run Kill Script
+      ansible.builtin.script:
+        cmd: kill.sh
 
 - name: Create Host 1 Pubs
   hosts: host1
@@ -140,3 +147,29 @@
       ansible.builtin.copy:
         dest: "{{ basePath }}/.flag"
         content: 1
+
+- name: Collect all logs
+  hosts: all
+  vars_files:
+    - "common_vars.yml"
+  vars:
+    collectedLogPath: "/Users/flyotlin/Documents/Program/dds-qos-optimization/case-2/collected_logs/{{ config }}/{{ trialNum }}"
+    max_timeout: 120
+  tasks:
+    - name: Wait for timeout
+      ansible.builtin.wait_for:
+        timeout: "{{ max_timeout }}"
+    - name: Collect publisher logs
+      ansible.builtin.fetch:
+        src: "{{ logPath }}/p{{ item }}.log"
+        dest: "{{ collectedLogPath }}/pub/"
+        flat: yes
+        fail_on_missing: no
+      loop: "{{ pub_logs }}"
+    - name: Collect subscriber logs
+      ansible.builtin.fetch:
+        src: "{{ logPath }}/s{{ item }}.log"
+        dest: "{{ collectedLogPath }}/sub/"
+        flat: yes
+        fail_on_missing: no
+      loop: "{{ sub_logs }}"

@@ -27,9 +27,10 @@ class WriterListener(fastdds.DataWriterListener):
             self._writer._cvDiscovery.notify()
             self._writer._cvDiscovery.release()
 
-    def monitor_flag(self, flag_file: str = ".flag", sleep_time: float = 0.5):
+    def monitor_flag(self, flag_name: str = ".flag", sleep_time: float = 0.5):
+        pwd = os.path.abspath(os.path.dirname(__file__))
         while True:
-            with open(flag_file, "r") as f:
+            with open(os.path.join(pwd, "../", flag_name), "r") as f:
                 flag = f.read()
                 if "1" == flag:
                     self._writer._cvDiscovery.acquire()
@@ -37,7 +38,7 @@ class WriterListener(fastdds.DataWriterListener):
                     self._writer._cvDiscovery.notify()
                     self._writer._cvDiscovery.release()
                     break
-            time.sleep(flag_file)
+            time.sleep(sleep_time)
 
 
 

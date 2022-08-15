@@ -9,3 +9,4 @@ inventory.yaml
 **/logs
 **/*.log
 **/.flag
+.DS_Store
