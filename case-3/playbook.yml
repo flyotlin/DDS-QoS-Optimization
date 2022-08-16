@@ -43,7 +43,7 @@
   vars_files:
     - common_vars.yml
   tasks:
-    - name: Create pub 1, 4, 7 ~ 15
+    - name: Create pub 1, 4, 7 ~ 32
       ansible.builtin.command: "bash {{ basePath }}/create.sh p{{ item }} pub {{ topicPrefix }}_{{ item }}"
       loop: "{{ host1_pubs }}"
 
@@ -52,7 +52,7 @@
   vars_files:
     - common_vars.yml
   tasks:
-    - name: Create sub 1, 4, 7 ~ 15
+    - name: Create sub 1, 4, 7 ~ 32
       ansible.builtin.command: "bash {{ basePath }}/create.sh s{{ item }} sub {{ topicPrefix }}_{{ item }}"
       loop: "{{ host2_subs }}"
     - name: Create sub 2, 3 on Topic SimpleStringTopic_1
@@ -71,18 +71,18 @@
   vars_files:
     - common_vars.yml
   tasks:
-    - name: Create pub 17
-      ansible.builtin.command: "bash {{ basePath }}/create.sh p17 pub {{ topicPrefix }}_17"
-    - name: Create sub 16 on Topic SimpleStringTopic_1
-      ansible.builtin.command: "bash {{ basePath }}/create.sh s16 sub {{ topicPrefix }}_1"
+    - name: Create pub 34
+      ansible.builtin.command: "bash {{ basePath }}/create.sh p34 pub {{ topicPrefix }}_34"
+    - name: Create sub 33 on Topic SimpleStringTopic_1
+      ansible.builtin.command: "bash {{ basePath }}/create.sh s33 sub {{ topicPrefix }}_1"
 
 - name: Create Host 4 Pub/Sub
   hosts: host4
   vars_files:
     - common_vars.yml
   tasks:
-    - name: Create s17
-      ansible.builtin.command: "bash {{ basePath }}/create.sh s17 sub {{ topicPrefix }}_17"
+    - name: Create s34
+      ansible.builtin.command: "bash {{ basePath }}/create.sh s34 sub {{ topicPrefix }}_34"
 
 - name: Start Pub/Sub on all Hosts
   hosts: all
@@ -99,7 +99,7 @@
   vars_files:
     - "common_vars.yml"
   vars:
-    collectedLogPath: "/Users/flyotlin/Documents/Program/dds-qos-optimization/case-2/collected_logs/{{ config }}/{{ trialNum }}"
+    collectedLogPath: "/Users/flyotlin/Documents/Program/dds-qos-optimization/case-3/collected_logs/{{ config }}/{{ trialNum }}"
     max_timeout: 120
   tasks:
     - name: Wait for timeout
