@@ -64,7 +64,7 @@
       ansible.builtin.command: "bash {{ basePath }}/create.sh s{{ item }} sub {{ topicPrefix }}_4"
       loop:
         - 5
-        - 7
+        - 6
 
 - name: Create Host 3 Pub/Sub
   hosts: host3
