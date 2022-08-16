@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd "{{ srcPath }}"
+fastddsgen -python SimpleString.idl
+cmake .
+make

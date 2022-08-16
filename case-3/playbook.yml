@@ -1,0 +1,121 @@
+---
+- name: Delete All Old Log Files and Processes
+  hosts: all
+  vars_files:
+    - common_vars.yml
+  tasks:
+    - name: Delete Log Files
+      ansible.builtin.file:
+        path: "{{ logPath }}"
+        state: absent
+    - name: Delete Flag Files
+      ansible.builtin.file:
+        path: "{{ basePath }}/.flag"
+        state: absent
+    - name: Clone Repo
+      ansible.builtin.git:
+        repo: "{{ repoUrl }}"
+        dest: "{{ repoPath }}"
+    - name: Generate Initialize Script
+      template:
+        src: init.sh.j2
+        dest: "{{ basePath }}/init.sh"
+    - name: Run Initialize Script
+      command: "bash {{ basePath }}/init.sh"
+    - name: Generate Create Script
+      template:
+        src: create.sh.j2
+        dest: "{{ basePath }}/create.sh"
+    - name: Create control file `.flag`
+      ansible.builtin.copy:
+        dest: "{{ basePath }}/.flag"
+        content: 0
+    - name: Restore Log Directory
+      ansible.builtin.file:
+        path: "{{ logPath }}"
+        state: directory
+    - name: Run Kill Script
+      ansible.builtin.script:
+        cmd: kill.sh
+
+- name: Create Host 1 Pubs
+  hosts: host1
+  vars_files:
+    - common_vars.yml
+  tasks:
+    - name: Create pub 1, 4, 7 ~ 15
+      ansible.builtin.command: "bash {{ basePath }}/create.sh p{{ item }} pub {{ topicPrefix }}_{{ item }}"
+      loop: "{{ host1_pubs }}"
+
+- name: Create Host 2 Pub/Sub
+  hosts: host2
+  vars_files:
+    - common_vars.yml
+  tasks:
+    - name: Create sub 1, 4, 7 ~ 15
+      ansible.builtin.command: "bash {{ basePath }}/create.sh s{{ item }} sub {{ topicPrefix }}_{{ item }}"
+      loop: "{{ host2_subs }}"
+    - name: Create sub 2, 3 on Topic SimpleStringTopic_1
+      ansible.builtin.command: "bash {{ basePath }}/create.sh s{{ item }} sub {{ topicPrefix }}_1"
+      loop:
+        - 2
+        - 3
+    - name: Create sub 5, 7 on Topic SimpleStringTopic_4
+      ansible.builtin.command: "bash {{ basePath }}/create.sh s{{ item }} sub {{ topicPrefix }}_4"
+      loop:
+        - 5
+        - 6
+
+- name: Create Host 3 Pub/Sub
+  hosts: host3
+  vars_files:
+    - common_vars.yml
+  tasks:
+    - name: Create pub 17
+      ansible.builtin.command: "bash {{ basePath }}/create.sh p17 pub {{ topicPrefix }}_17"
+    - name: Create sub 16 on Topic SimpleStringTopic_1
+      ansible.builtin.command: "bash {{ basePath }}/create.sh s16 sub {{ topicPrefix }}_1"
+
+- name: Create Host 4 Pub/Sub
+  hosts: host4
+  vars_files:
+    - common_vars.yml
+  tasks:
+    - name: Create s17
+      ansible.builtin.command: "bash {{ basePath }}/create.sh s17 sub {{ topicPrefix }}_17"
+
+- name: Start Pub/Sub on all Hosts
+  hosts: all
+  vars_files:
+    - common_vars.yml
+  tasks:
+    - name: Change control file `.flag`'s value
+      ansible.builtin.copy:
+        dest: "{{ basePath }}/.flag"
+        content: 1
+
+- name: Collect all logs
+  hosts: all
+  vars_files:
+    - "common_vars.yml"
+  vars:
+    collectedLogPath: "/Users/flyotlin/Documents/Program/dds-qos-optimization/case-2/collected_logs/{{ config }}/{{ trialNum }}"
+    max_timeout: 120
+  tasks:
+    - name: Wait for timeout
+      ansible.builtin.wait_for:
+        timeout: "{{ max_timeout }}"
+    - name: Collect publisher logs
+      ansible.builtin.fetch:
+        src: "{{ logPath }}/p{{ item }}.log"
+        dest: "{{ collectedLogPath }}/pub/"
+        flat: yes
+        fail_on_missing: no
+      loop: "{{ pub_logs }}"
+    - name: Collect subscriber logs
+      ansible.builtin.fetch:
+        src: "{{ logPath }}/s{{ item }}.log"
+        dest: "{{ collectedLogPath }}/sub/"
+        flat: yes
+        fail_on_missing: no
+      loop: "{{ sub_logs }}"

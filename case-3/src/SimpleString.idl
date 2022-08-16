@@ -1,0 +1,5 @@
+struct SimpleString
+{
+    unsigned long index;
+    string data;
+};
