@@ -83,7 +83,7 @@ class Writer:
         self.wait_discovery()
         for _ in range(self.totalMsgs):
             time.sleep(1 / self.sendingRate)
-            self.write()
+            self.write("RErRxZp9fprLbyZD1GXtKujEMyIfxI15AyB5sxVRaN96kB4auk9a8NJ69gYlpMySpZ9jXWFuf1hOGaUVaHZr4zhoHh5wSOT6tUhu7UZpIaainlUBgL3N6xZSuczTKVL4Q7DgBW7mm2mOwKeJLQnosqGIPZb1V89z4toJUu7nTHKxx3TGQLjNOLnm7Hs3A6jlWkawQeEbnuoZUdDYsBHU4cZz7Hr7y0TqoZJWCjIYpyLCV3PaAqNYXLYloqQr9YM")
         self.delete()
 
     def delete(self):
