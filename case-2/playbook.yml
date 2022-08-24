@@ -99,7 +99,8 @@
   vars_files:
     - "common_vars.yml"
   vars:
-    collectedLogPath: "/Users/flyotlin/Documents/Program/dds-qos-optimization/case-2/collected_logs/{{ config }}/{{ trialNum }}"
+    logDirname: "collected_logs"
+    collectedLogPath: "/Users/flyotlin/Documents/Program/dds-qos-optimization/case-2/{{ logDirname }}/{{ config }}/{{ trialNum }}"
     max_timeout: 120
   tasks:
     - name: Wait for timeout
