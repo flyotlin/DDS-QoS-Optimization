@@ -103,7 +103,7 @@
 
     - name: Collect publisher/subscriber logs
       ansible.builtin.fetch:
-        src: "{{ logPath }}/{{ item }}.log"
+        src: "{{ logPath }}/{{ item | split(':') | first }}.log"
         dest: "{{ collectedLogPath }}/"
         flat: yes
         fail_on_missing: no
