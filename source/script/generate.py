@@ -48,6 +48,7 @@ def generate_host_vars(args, num: int = 4) -> None:
         host_vars['basePath'] = os.path.join(config['repoPath'], f'case-{config["case_num"]}')
         host_vars['logPath'] = os.path.join(host_vars['basePath'], 'log')
         host_vars['entities'] = config[f'host{i+1}']
+        host_vars['topicPrefix'] = config['topicPrefix']
 
         dump_yaml(host_vars, f'host{i+1}_vars.yaml')
 
