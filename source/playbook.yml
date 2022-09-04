@@ -1,0 +1,65 @@
+---
+- name: Set up experiment
+  hosts: all
+  vars_files:
+    - set_up_vars.yaml
+  tasks:
+    - name: Delete Log Files
+      ansible.builtin.file:
+        path: "{{ logPath }}"
+        state: absent
+
+    - name: Delete Flag Files
+      ansible.builtin.file:
+        path: "{{ basePath }}/.flag"
+        state: absent
+
+    - name: Clone Repo
+      ansible.builtin.git:
+        repo: "{{ repoUrl }}"
+        dest: "{{ repoPath }}"
+
+    - name: Generate init.sh
+      ansible.builtin.template:
+        src: template/init.sh.j2
+        dest: "{{ basePath }}/init.sh"
+
+    - name: Run init.sh
+      ansible.builtin.command: "bash {{ basePath }}/init.sh"
+
+    - name: Generate create.sh
+      ansible.builtin.template:
+        src: template/create.sh.j2
+        dest: "{{ basePath }}/create.sh"
+
+    - name: Generate .flag
+      ansible.builtin.copy:
+        dest: "{{ basePath }}/.flag"
+        content: 0
+
+    - name: Restore log directory on hosts
+      ansible.builtin.file:
+        path: "{{ logPath }}"
+        state: directory
+
+    - name: Run kill.sh
+      ansible.builtin.script:
+        cmd: script/kill.sh
+
+- name: Set up Host 1
+  hosts: host1
+  vars_files:
+    - host1_vars.yaml
+  tasks:
+    - name: Create publishers/subscribers
+      ansible.builtin.command: "bash {{ basePath }}/create.sh {{ item }} "
+
+- name: Set up Host 2
+
+- name: Set up Host 3
+
+- name: Set up Host 4
+
+- name: Start all publishers and subscribers
+
+- name: Collect logs
