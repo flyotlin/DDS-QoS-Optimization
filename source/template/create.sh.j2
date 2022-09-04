@@ -6,11 +6,16 @@ PUB="$scriptPath"/src/publisher.py
 SUB="$scriptPath"/src/subscriber.py
 
 name=$1                     # pub/sub name, also log file name
-type=$2                     # either `pub` or `sub`
-topic=$3                    # topic name publishes and subscribes to
+topic=$2                    # topic name publishes and subscribes to
 config={{ config }}         # qos config name
 messages={{ messages }}     # total messages published
 rate={{ rate }}             # publisher message sending rate (messages/sec)
+
+if [[ "$name" =~ ^p.* ]]; then
+    type=pub
+elif [[ "$name" =~ ^s.* ]]; then
+    type=sub
+fi
 
 source "{{ fastddsPath }}"
 

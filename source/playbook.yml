@@ -52,14 +52,59 @@
     - host1_vars.yaml
   tasks:
     - name: Create publishers/subscribers
-      ansible.builtin.command: "bash {{ basePath }}/create.sh {{ item }} "
+      ansible.builtin.command: "bash {{ basePath }}/create.sh {{ item | split(':') | first }} {{ topicPrefix }}_{{ item | split(':') | last }} "
+      loop: "{{ entities }}"
 
 - name: Set up Host 2
+  hosts: host2
+  vars_files:
+    - host2_vars.yaml
+  tasks:
+    - name: Create publishers/subscribers
+      ansible.builtin.command: "bash {{ basePath }}/create.sh {{ item | split(':') | first }} {{ topicPrefix }}_{{ item | split(':') | last }} "
+      loop: "{{ entities }}"
 
 - name: Set up Host 3
+  hosts: host3
+  vars_files:
+    - host3_vars.yaml
+  tasks:
+    - name: Create publishers/subscribers
+      ansible.builtin.command: "bash {{ basePath }}/create.sh {{ item | split(':') | first }} {{ topicPrefix }}_{{ item | split(':') | last }} "
+      loop: "{{ entities }}"
 
 - name: Set up Host 4
+  hosts: host4
+  vars_files:
+    - host4_vars.yaml
+  tasks:
+    - name: Create publishers/subscribers
+      ansible.builtin.command: "bash {{ basePath }}/create.sh {{ item | split(':') | first }} {{ topicPrefix }}_{{ item | split(':') | last }} "
+      loop: "{{ entities }}"
 
 - name: Start all publishers and subscribers
+  hosts: all
+  vars_files:
+    - control_vars.yaml
+  tasks:
+    - name: Change `.flag`'s value
+      ansible.builtin.copy:
+        dest: "{{ basePath }}/.flag"
+        content: 1
 
 - name: Collect logs
+  hosts: all
+  vars_files:
+    - logs_vars.yaml
+  tasks:
+    - name: Wait for timeout
+      ansible.builtin.wait_for:
+        timeout: "{{ wait_for_timeout }}"
+
+    - name: Collect publisher/subscriber logs
+      ansible.builtin.fetch:
+        src: "{{ logPath }}/{{ item }}.log"
+        dest: "{{ collectedLogPath }}/"
+        flat: yes
+        fail_on_missing: no
+      loop: "{{ entities }}"

@@ -1,19 +1,13 @@
 repoUrl: https://github.com/flyotlin/DDS-QoS-Optimization.git
 fastddsPath: /home/pdclab/Fast-DDS-python/install/setup.bash
 repoPath: /home/pdclab/Optimize-DDS-QoS
-configs:
-  - OMG-Def
-  - OMG-Mod
-  - MS-1
-  - MS-10
-  - MS-100
-  - MS-1000
-sleep_time: 80
-trial_num: 10
+config: OMG-Def #
 case_num: 2
 total_messages: 20000
 transport: tcpv4
 sending_rate: 1000
+controlNodeBasePath: /home/flyotlin/Documents/Program/DDS-QoS-Optimization/
+wait_for_timeout: 80
 host1:
   - p1:t1
   - p4:t4
