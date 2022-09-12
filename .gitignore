@@ -10,3 +10,8 @@ inventory.yaml
 **/*.log
 **/.flag
 .DS_Store
+
+host*_vars.yaml
+set_up_vars.yaml
+control_vars.yaml
+logs_vars.yaml

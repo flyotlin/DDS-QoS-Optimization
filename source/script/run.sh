@@ -1,9 +1,9 @@
 #! /bin/bash
 
 # Variables
-trial_num=10
-sleep_time=80
-case_num=2
+case_num=$1         # case number, either (1, 2, 3)
+trial_num=$2        # number of trials, normally 10
+sleep_time=$3       # sleep time between each trial, normally 80s
 
 # set working directory
 cd "$(dirname "$0")" && cd ../

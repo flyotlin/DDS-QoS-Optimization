@@ -3,6 +3,17 @@ We hope to prepare a uniform src code for the 3 cases.
 
 So that you only need to provide configurations for 3 cases.
 
+## How to run
+### `statisticas.py`
+- `$ python3 statistics.py --trial 10 --case 2`
+
+### `run.sh`
+- prepare your `configs.yaml` in `source/config/case-n`
+- `$ bash run.sh 1 10 80`
+  - `case_num`: case number, either (1, 2, 3)
+  - `trial_num`: number of trials, normally 10
+  - `sleep_time`: sleep time between each trial, normally 80 sec
+
 ## Configs
 `configs.yaml` 中能指定所有本次實驗要調整的參數，參數包含：
 - repoUrl

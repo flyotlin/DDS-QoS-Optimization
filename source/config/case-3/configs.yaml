@@ -1,0 +1,78 @@
+repoUrl: https://github.com/flyotlin/DDS-QoS-Optimization.git
+fastddsPath: /home/pdclab/Fast-DDS-python/install/setup.bash
+repoPath: /home/pdclab/Optimize-DDS-QoS
+config: OMG-Def #
+case_num: 3
+total_messages: 20000
+transport: tcpv4
+sending_rate: 1000
+controlNodeBasePath: /home/flyotlin/Documents/Program/DDS-QoS-Optimization/
+wait_for_timeout: 80
+topicPrefix: SimpleStringTopic
+host1:
+  - p1:t1
+  - p4:t4
+  - p7:t7
+  - p8:t8
+  - p9:t9
+  - p10:t10
+  - p11:t11
+  - p12:t12
+  - p13:t13
+  - p14:t14
+  - p15:t15
+  - p16:t16
+  - p17:t17
+  - p18:t18
+  - p19:t19
+  - p20:t20
+  - p21:t21
+  - p22:t22
+  - p23:t23
+  - p24:t24
+  - p25:t25
+  - p26:t26
+  - p27:t27
+  - p28:t28
+  - p29:t29
+  - p30:t30
+  - p31:t31
+  - p32:t32
+host2:
+  - s1:t1
+  - s2:t1
+  - s3:t1
+  - s4:t4
+  - s5:t4
+  - s6:t4
+  - s7:t7
+  - s8:t8
+  - s9:t9
+  - s10:t10
+  - s11:t11
+  - s12:t12
+  - s13:t13
+  - s14:t14
+  - s15:t15
+  - s16:t16
+  - s17:t17
+  - s18:t18
+  - s19:t19
+  - s20:t20
+  - s21:t21
+  - s22:t22
+  - s23:t23
+  - s24:t24
+  - s25:t25
+  - s26:t26
+  - s27:t27
+  - s28:t28
+  - s29:t29
+  - s30:t30
+  - s31:t31
+  - s32:t32
+host3:
+  - s33:t1
+  - p34:t34
+host4:
+  - s34:t34
