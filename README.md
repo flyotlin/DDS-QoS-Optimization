@@ -1,5 +1,5 @@
 # DDS Qos Optimization
-There's 3 cases (experiments) included
+There's 3 cases (experiments) included, please see `source/` for latest experiment scripts.
 
 ## Parameters
 - On Topic (yaml files in `configs`)
