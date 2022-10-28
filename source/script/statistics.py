@@ -27,7 +27,8 @@ def get_topics(case: int, hosts_num: int = 4) -> dict:
     for i in range(1, hosts_num + 1):
         host = config[f'host{i}']
         for entity in host:
-            e, t = entity.split(':')
+            l = entity.split(':')
+            e, t = l[0], l[1]
 
             if t not in topics:
                 topics[t] = [e]
