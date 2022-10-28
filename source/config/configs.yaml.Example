@@ -1,7 +1,6 @@
 repoUrl: https://github.com/flyotlin/DDS-QoS-Optimization.git
 fastddsPath: /home/pdclab/Fast-DDS-python/install/setup.bash
 repoPath: /home/pdclab/Optimize-DDS-QoS
-config: OMG-Def #
 case_num: 1
 transport: tcpv4
 controlNodeBasePath: /home/flyotlin/Documents/Program/DDS-QoS-Optimization/
@@ -12,14 +11,8 @@ host1:
   - p2:t2:10000:1000
   - p3:t3:10000:1000
 host2:
-  sending_rate: 1000
-  entities:
-    - s1:t1:10000
+  - s1:t1:10000
 host3:
-  sending_rate: 1000
-  entities:
-    - s2:t2:10000
+  - s2:t2:10000
 host4:
-  sending_rate: 1000
-  entities:
-    - s3:t3:10000
+  - s3:t3:10000
