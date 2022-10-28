@@ -20,7 +20,7 @@ fi
 source "{{ fastddsPath }}"
 
 if [ "pub" == "$type" ]; then
-    if [ -z "$rate" ] || [ -z "$message" ]; then
+    if [ -z "$rate" ] || [ -z "$messages" ]; then
         echo "Sending Rate and #Messages shoudl be given in Publisher"
         exit 0
     fi
@@ -29,8 +29,8 @@ if [ "pub" == "$type" ]; then
         --topic="$topic" --rate="$rate" &> {{ logPath }}/"$name".log &
     exit 0
 elif [ "sub" == "$type" ]; then
-    if [ -z "$message" ]; then
-        echo "#Messages shoudl be given in Subscriber"
+    if [ -z "$messages" ]; then
+        echo "#Messages should be given in Subscriber"
         exit 0
     fi
     echo "Subscriber created"
