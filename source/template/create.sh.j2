@@ -8,8 +8,8 @@ SUB="$scriptPath"/src/subscriber.py
 name=$1                     # pub/sub name, also log file name
 topic=$2                    # topic name publishes and subscribes to
 config={{ config }}         # qos config name
-messages={{ messages }}     # total messages published
-rate={{ rate }}             # publisher message sending rate (messages/sec)
+messages=$3                 # total messages published
+rate=$4                     # publisher message sending rate (messages/sec) (optional)
 
 if [[ "$name" =~ ^p.* ]]; then
     type=pub
@@ -20,11 +20,19 @@ fi
 source "{{ fastddsPath }}"
 
 if [ "pub" == "$type" ]; then
+    if [ -z "$rate" ] || [ -z "$message" ]; then
+        echo "Sending Rate and #Messages shoudl be given in Publisher"
+        exit 0
+    fi
     echo "Publisher created"
     nohup python3 "$PUB" --config="$config" --messages="$messages" \
         --topic="$topic" --rate="$rate" &> {{ logPath }}/"$name".log &
     exit 0
 elif [ "sub" == "$type" ]; then
+    if [ -z "$message" ]; then
+        echo "#Messages shoudl be given in Subscriber"
+        exit 0
+    fi
     echo "Subscriber created"
     nohup python3 "$SUB" --config="$config" --messages="$messages" \
         --topic="$topic" &> {{ logPath }}/"$name".log &

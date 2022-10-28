@@ -29,9 +29,7 @@ def generate_set_up_vars(args) -> None:
         'repoUrl': config['repoUrl'],
         'repoPath': config['repoPath'],
         'fastddsPath': config['fastddsPath'],
-        'config': args.config,
-        'messages': config['total_messages'],
-        'rate': config['sending_rate']
+        'config': args.config
     }
     set_up_vars['basePath'] = os.path.join(set_up_vars['repoPath'], f'case-{config["case_num"]}')
     set_up_vars['logPath'] = os.path.join(set_up_vars['basePath'], 'log')

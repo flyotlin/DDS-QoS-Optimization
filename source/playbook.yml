@@ -51,36 +51,56 @@
   vars_files:
     - host1_vars.yaml
   tasks:
-    - name: Create publishers/subscribers
-      ansible.builtin.command: "bash {{ basePath }}/create.sh {{ item | split(':') | first }} {{ topicPrefix }}_{{ item | split(':') | last }} "
+    - name: Create publishers
+      ansible.builtin.command: "bash {{ basePath }}/create.sh {{ item.split(':')[0] }} {{ topicPrefix }}_{{ item.split(':')[1] }} {{ item.split(':')[2] }} {{ item.split(':')[3] }}"
       loop: "{{ entities }}"
+      when: item is regex('^p.*')
+    - name: Create subscribers
+      ansible.builtin.command: "bash {{ basePath }}/create.sh {{ item.split(':')[0] }} {{ topicPrefix }}_{{ item.split(':')[1] }} {{ item.split(':')[2] }}"
+      loop: "{{ entities }}"
+      when: item is regex('^s.*')
 
 - name: Set up Host 2
   hosts: host2
   vars_files:
     - host2_vars.yaml
   tasks:
-    - name: Create publishers/subscribers
-      ansible.builtin.command: "bash {{ basePath }}/create.sh {{ item | split(':') | first }} {{ topicPrefix }}_{{ item | split(':') | last }} "
+    - name: Create publishers
+      ansible.builtin.command: "bash {{ basePath }}/create.sh {{ item.split(':')[0] }} {{ topicPrefix }}_{{ item.split(':')[1] }} {{ item.split(':')[2] }} {{ item.split(':')[3] }}"
       loop: "{{ entities }}"
+      when: item is regex('^p.*')
+    - name: Create subscribers
+      ansible.builtin.command: "bash {{ basePath }}/create.sh {{ item.split(':')[0] }} {{ topicPrefix }}_{{ item.split(':')[1] }} {{ item.split(':')[2] }}"
+      loop: "{{ entities }}"
+      when: item is regex('^s.*')
 
 - name: Set up Host 3
   hosts: host3
   vars_files:
     - host3_vars.yaml
   tasks:
-    - name: Create publishers/subscribers
-      ansible.builtin.command: "bash {{ basePath }}/create.sh {{ item | split(':') | first }} {{ topicPrefix }}_{{ item | split(':') | last }} "
+    - name: Create publishers
+      ansible.builtin.command: "bash {{ basePath }}/create.sh {{ item.split(':')[0] }} {{ topicPrefix }}_{{ item.split(':')[1] }} {{ item.split(':')[2] }} {{ item.split(':')[3] }}"
       loop: "{{ entities }}"
+      when: item is regex('^p.*')
+    - name: Create subscribers
+      ansible.builtin.command: "bash {{ basePath }}/create.sh {{ item.split(':')[0] }} {{ topicPrefix }}_{{ item.split(':')[1] }} {{ item.split(':')[2] }}"
+      loop: "{{ entities }}"
+      when: item is regex('^s.*')
 
 - name: Set up Host 4
   hosts: host4
   vars_files:
     - host4_vars.yaml
   tasks:
-    - name: Create publishers/subscribers
-      ansible.builtin.command: "bash {{ basePath }}/create.sh {{ item | split(':') | first }} {{ topicPrefix }}_{{ item | split(':') | last }} "
+    - name: Create publishers
+      ansible.builtin.command: "bash {{ basePath }}/create.sh {{ item.split(':')[0] }} {{ topicPrefix }}_{{ item.split(':')[1] }} {{ item.split(':')[2] }} {{ item.split(':')[3] }}"
       loop: "{{ entities }}"
+      when: item is regex('^p.*')
+    - name: Create subscribers
+      ansible.builtin.command: "bash {{ basePath }}/create.sh {{ item.split(':')[0] }} {{ topicPrefix }}_{{ item.split(':')[1] }} {{ item.split(':')[2] }}"
+      loop: "{{ entities }}"
+      when: item is regex('^s.*')
 
 - name: Start all publishers and subscribers
   hosts: all
