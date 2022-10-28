@@ -4,20 +4,30 @@
   vars_files:
     - set_up_vars.yaml
   tasks:
-    - name: Delete Log Files
+    - name: Delete BasePath (delete log files, .flag also)
       ansible.builtin.file:
-        path: "{{ logPath }}"
         state: absent
+        path: "{{ basePath }}"
 
-    - name: Delete Flag Files
-      ansible.builtin.file:
-        path: "{{ basePath }}/.flag"
-        state: absent
+    - name: Create BasePath
+      ansible.builtin.command: "mkdir -p {{ basePath }}"
+
+    - name: Create LogPath
+      ansible.builtin.command: "mkdir -p {{ logPath }}"
+
+    - name: Create SrcPath
+      ansible.builtin.command: "mkdir -p {{ srcPath }}"
 
     - name: Clone Repo
       ansible.builtin.git:
         repo: "{{ repoUrl }}"
         dest: "{{ repoPath }}"
+
+    - name: Copy src to BasePath
+      ansible.builtin.shell:
+        cmd: "cp {{ repoPath }}/source/src/* {{ srcPath }}"
+      args:
+        executable: /bin/bash
 
     - name: Generate init.sh
       ansible.builtin.template:
