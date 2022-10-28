@@ -7,8 +7,10 @@ import os
 import yaml
 
 
+pwd = os.path.abspath(os.path.dirname(__file__))
+
 CONFIGS = ["OMG-Def", "OMG-Mod", "MS-1", "MS-10", "MS-100", "MS-1000"]
-CONFIG_PATH = 'config/case-{case}/configs.yaml'     # string format template
+CONFIG_PATH = os.path.join(pwd, '../config/case-{case}/configs.yaml')     # string format template
 LOG_PATH = '../logs/case-{case}'                    # string format template
 
 
