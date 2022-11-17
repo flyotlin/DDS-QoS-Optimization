@@ -1,5 +1,6 @@
 import argparse
 import fastdds
+import json
 import os
 import SimpleString
 import time
@@ -48,11 +49,16 @@ class Writer:
             config: YamlConfig = None,
             totalMsgs: int = 10,
             sendingRate: int = 10,
-            topicName: str = "SimpleStringTopic") -> None:
+            topicName: str = "SimpleStringTopic",
+            context: dict = {}) -> None:
         self.config = config
         self.totalMsgs = totalMsgs
         self.sendingRate = sendingRate
         self.topicName = topicName
+        self.msg = "RErRxZp9fprLbyZD1GXtKujEMyIfxI15AyB5sxVRaN96kB4auk9a8NJ69gYlpMySpZ9jXWFuf1hOGaUVaHZr4zhoHh5wSOT6tUhu7UZpIaainlUBgL3N6xZSuczTKVL4Q7DgBW7mm2mOwKeJLQnosqGIPZb1V89z4toJUu7nTHKxx3TGQLjNOLnm7Hs3A6jlWkawQeEbnuoZUdDYsBHU4cZz7Hr7y0TqoZJWCjIYpyLCV3PaAqNYXLYloqQr9YM"
+
+        self.context = context
+        self.context["message"] = self.msg
 
         self._matched_reader = 0
         self._cvDiscovery = Condition()
@@ -83,7 +89,7 @@ class Writer:
         self.wait_discovery()
         for _ in range(self.totalMsgs):
             time.sleep(1 / self.sendingRate)
-            self.write("RErRxZp9fprLbyZD1GXtKujEMyIfxI15AyB5sxVRaN96kB4auk9a8NJ69gYlpMySpZ9jXWFuf1hOGaUVaHZr4zhoHh5wSOT6tUhu7UZpIaainlUBgL3N6xZSuczTKVL4Q7DgBW7mm2mOwKeJLQnosqGIPZb1V89z4toJUu7nTHKxx3TGQLjNOLnm7Hs3A6jlWkawQeEbnuoZUdDYsBHU4cZz7Hr7y0TqoZJWCjIYpyLCV3PaAqNYXLYloqQr9YM")
+            self.write(self.msg)
         self.delete()
 
     def delete(self):
@@ -92,6 +98,8 @@ class Writer:
         factory.delete_participant(self.participant)
 
     def create_participant(self, domain_id: int = 0) -> fastdds.DomainParticipant:
+        self.context["domainID"] = domain_id
+
         factory: fastdds.DomainParticipantFactory = fastdds.DomainParticipantFactory.get_instance()
         self.participant_qos = fastdds.DomainParticipantQos()
         factory.get_default_participant_qos()
@@ -100,6 +108,8 @@ class Writer:
     def create_topic(self, name: str) -> fastdds.Topic:
         self.topic_data_type = SimpleString.SimpleStringPubSubType()
         self.topic_data_type.setName("SimpleStringType")
+        self.context["topicTypeName"] = "SimpleStringType"
+
         self.type_support = fastdds.TypeSupport(self.topic_data_type)
         self.participant.register_type(self.type_support)
 
@@ -130,6 +140,11 @@ class Writer:
         elif self.config.history.kind == "KEEP_LAST":
             history.kind = fastdds.KEEP_LAST_HISTORY_QOS
         history.depth = self.config.history.depth
+
+        self.context["history"] = {
+            "kind": history.kind,
+            "depth": history.depth
+        }
         self.topic_qos.history(history)
 
         # Reliability
@@ -139,6 +154,11 @@ class Writer:
         elif self.config.reliability.kind == "RELIABLE":
             reliability.kind = fastdds.RELIABLE_RELIABILITY_QOS
         reliability.max_blocking_time = fastdds.Time_t(self.config.reliability.max_blocking_time, 0)
+
+        self.context["reliability"] = {
+            "kind": reliability.kind,
+            "max_blocking_time": reliability.max_blocking_time
+        }
         self.topic_qos.reliability(reliability)
 
         # ResourceLimits
@@ -146,7 +166,18 @@ class Writer:
         resourceLimits.max_samples = self.config.resourceLimits.max_samples
         resourceLimits.max_instances = self.config.resourceLimits.max_instances
         resourceLimits.max_samples_per_instance = self.config.resourceLimits.max_samples_per_instance
+
+        self.context["resourceLimits"] = {
+            "max_samples": resourceLimits.max_samples,
+            "max_instances": resourceLimits.max_instances,
+            "max_samples_per_instance": resourceLimits.max_samples_per_instance
+        }
         self.topic_qos.resource_limits(resourceLimits)
+
+
+def dump_context_as_json(name: str, context: dict):
+    with open(name + ".conf", "w") as f:
+        json.dump(context, f, indent=2)
 
 
 def main(args: list):
@@ -161,17 +192,21 @@ def main(args: list):
     config_name = configName + ".yaml"
     config = YamlConfig.create_from_yaml(os.path.join(pwd, '../../configs/', config_name))
 
+    context = {"configName": configName, "totalMsgs": totalMsgs, "sendingRate": sendingRate, "topicName": topicName}
     writer = Writer(
         config=config,
         totalMsgs=totalMsgs,
         sendingRate=sendingRate,
-        topicName=topicName
+        topicName=topicName,
+        context=context
     )
+    dump_context_as_json(args.name, context)
     writer.run()
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument("--name", "-n", help="Publisher's name")
     parser.add_argument("--config", "-c", help="specify config name", default="OMG-Def")
     parser.add_argument("--messages", "-m", help="specify total number of messages sent by a publisher", type=int, default=10000)
     parser.add_argument("--rate", "-r", help="specify publisher sending rate", type=int, default=100)

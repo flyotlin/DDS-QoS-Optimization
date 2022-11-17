@@ -1,6 +1,7 @@
 import argparse
 import os
 import fastdds
+import json
 import SimpleString
 import signal
 import threading
@@ -61,10 +62,12 @@ class Reader:
             self,
             config: YamlConfig,
             totalMsgs: int = 10,
-            topicName: str = "SimpleStringType") -> None:
+            topicName: str = "SimpleStringType",
+            context: dict = {}) -> None:
         self.config = config
         self.totalMsgs = totalMsgs
         self.topicName = topicName
+        self.context = context
 
         print(os.getpid(), flush=True)
         self.samples_received = 0
@@ -89,6 +92,8 @@ class Reader:
         print("Interrupted!", flush=True)
 
     def create_participant(self, domain_id: int = 0) -> fastdds.DomainParticipant:
+        self.context["domainID"] = domain_id
+
         factory: fastdds.DomainParticipantFactory = fastdds.DomainParticipantFactory.get_instance()
         self.participant_qos = fastdds.DomainParticipantQos()
         factory.get_default_participant_qos(self.participant_qos)
@@ -97,6 +102,8 @@ class Reader:
     def create_topic(self, name: str) -> fastdds.Topic:
         self.topic_data_type = SimpleString.SimpleStringPubSubType()
         self.topic_data_type.setName("SimpleStringType")
+        self.context["topicTypeName"] = "SimpleStringType"
+
         self.type_support = fastdds.TypeSupport(self.topic_data_type)
         self.participant.register_type(self.type_support)
 
@@ -116,6 +123,11 @@ class Reader:
         return self.subscriber.create_datareader(self.topic, self.reader_qos, self.listener)
 
 
+def dump_context_as_json(name: str, context: dict):
+    with open(name + ".conf", "w") as f:
+        json.dump(context, f, indent=2)
+
+
 def main(args: list):
     print("Creating Subscriber.", flush=True)
 
@@ -127,16 +139,20 @@ def main(args: list):
     config_name = configName + ".yaml"
     config = YamlConfig.create_from_yaml(os.path.join(pwd, '../../configs/', config_name))
 
+    context = {"configName": configName, "totalMsgs": totalMsgs, "topicName": topicName}
     reader = Reader(
         config=config,
         totalMsgs=totalMsgs,
-        topicName=topicName
+        topicName=topicName,
+        context=context
     )
+    dump_context_as_json(args.name, context)
     reader.run()
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument("--name", "-n", help="Subscriber's name")
     parser.add_argument("--config", "-c", help="specify config name", default="OMG-Def")
     parser.add_argument("--messages", "-m", help="specify total number of messages sent by a publisher", type=int, default=10000)
     parser.add_argument("--topic", "-t", help="specify topic name to which publisher publishes", default="SimpleStringTopic_1")

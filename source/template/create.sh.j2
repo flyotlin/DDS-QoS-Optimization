@@ -25,7 +25,7 @@ if [ "pub" == "$type" ]; then
         exit 0
     fi
     echo "Publisher created"
-    nohup python3 "$PUB" --config="$config" --messages="$messages" \
+    nohup python3 "$PUB" --name={{ logPath }}/"$name" --config="$config" --messages="$messages" \
         --topic="$topic" --rate="$rate" &> {{ logPath }}/"$name".log &
     exit 0
 elif [ "sub" == "$type" ]; then
@@ -34,7 +34,7 @@ elif [ "sub" == "$type" ]; then
         exit 0
     fi
     echo "Subscriber created"
-    nohup python3 "$SUB" --config="$config" --messages="$messages" \
+    nohup python3 "$SUB" --name={{ logPath }}/"$name" --config="$config" --messages="$messages" \
         --topic="$topic" &> {{ logPath }}/"$name".log &
     exit 0
 else

@@ -138,3 +138,11 @@
         flat: yes
         fail_on_missing: no
       loop: "{{ entities }}"
+
+    - name: Collect publisher/subscriber confs
+      ansible.builtin.fetch:
+        src: "{{ logPath }}/{{ item | split(':') | first }}.conf"
+        dest: "{{ collectedLogPath }}/"
+        flat: yes
+        fail_on_missing: no
+      loop: "{{ entities }}"
