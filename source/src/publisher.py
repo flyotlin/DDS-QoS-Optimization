@@ -157,7 +157,7 @@ class Writer:
 
         self.context["reliability"] = {
             "kind": reliability.kind,
-            "max_blocking_time": reliability.max_blocking_time
+            "max_blocking_time": reliability.max_blocking_time.to_ns()
         }
         self.topic_qos.reliability(reliability)
 
